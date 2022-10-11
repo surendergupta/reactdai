@@ -1,0 +1,23 @@
+.bg-purple
+{
+    background-color: blueviolet;
+}
+
+.carousel-inner {
+    height: 300px !important;
+}
+@media (min-width: 320px) and (max-width: 767px)
+{
+    .carousel-inner {
+        height: auto !important;
+    }
+}
+.carousel-inner .carousel-item
+{
+    height: 100% !important;
+}
+
+.carousel-inner .carousel-item img
+{
+    background-size: cover;
+}

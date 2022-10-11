@@ -1,17 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Web3 from 'web3'
+import { Web3ReactProvider } from '@web3-react/core'
+import { MetaMaskProvider } from './hooks/useMetaMask'
+
+import Dashboard from './pages/Dashboard/Dashboard';
+import DepositPage from './pages/Deposit/DepositPage';
+import WithdrawPage from './pages/Withdraw/WithdrawPage';
+import SplitPage from './pages/Split/SplitPage';
+import TeamPage from './pages/Team/TeamPage';
+import DepositHistoryPage from './pages/DepositHistory/DepositHistoryPage';
+import LatestDepositorPage from './pages/LatestDepositor/LatestDepositorPage';
+import TopPlayerPage from './pages/TopPlayer/TopPlayerPage';
+
+function getLibrary(provider, connector) {
+  return new Web3(provider)
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <MetaMaskProvider>
+        <Router>
+          <Routes>
+            <Route exact path="/" element={<Dashboard/>} />
+            <Route path="/deposit" element={ <DepositPage />} />
+            <Route path="/withdraw" element={ <WithdrawPage /> } />
+            <Route path="/split" element={ <SplitPage /> } />
+            <Route path="/team" element={ <TeamPage />} />
+            <Route path="/history" element={ <DepositHistoryPage /> } />
+            <Route path="/depositor" element={ <LatestDepositorPage />} />
+            <Route path="/top-player" element={<TopPlayerPage />} />
+          </Routes>
+        </Router>
+      </MetaMaskProvider>
+    </Web3ReactProvider>    
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

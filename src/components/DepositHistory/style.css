@@ -1,0 +1,12 @@
+.bg-purple
+{
+    background-color: blueviolet;
+}
+tr > th 
+{
+    white-space: nowrap;
+}
+@media (min-width: 320px) and (max-width: 767px)
+{
+    
+}
