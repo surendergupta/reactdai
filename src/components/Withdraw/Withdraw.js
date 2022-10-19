@@ -17,21 +17,22 @@ const Withdraw = () => {
   const [userTotalReward, setUserTotalReward] = useState(0);
   const timeLen = 10000;
   const MySwal = withReactContent(Swal);
-  var myobj, estimateGas, gasLimit;
+  var estimateGas, gasLimit;
   const getWalletConnect = async () => {
-    myobj = await exportedObject.walletConnect();
+    var myobj = await exportedObject.walletConnect();
+    var userAddr = myobj[0];
     setUserAddress(myobj[0]);
-    var {capitals, statics, directs, level4Released, level5Released, level5Freezed, star, top} = await exportedObject.MY_CONTRACT.methods.rewardInfo(userAddress).call();
+    var {capitals, statics, directs, level4Released, level5Released, level5Freezed, star, top} = await exportedObject.MY_CONTRACT.methods.rewardInfo(userAddr).call();
     let capamount = exportedObject.web3.utils.BN(exportedObject.web3.utils.fromWei(capitals.toString(), 'ether')).toString();
     var capital = parseFloat(capamount);
     setUserCapital(capital.toFixed(2));
-    var orderLength = parseInt(await exportedObject.MY_CONTRACT.methods.getOrderLength(userAddress).call());
+    var orderLength = parseInt(await exportedObject.MY_CONTRACT.methods.getOrderLength(userAddr).call());
     var timeNow = ((new Date()).getTime() / 1000);
     var timeStep = 24 * 60 * 60;
     var totalStatic = parseInt(statics);
     for(var i = 0; i < orderLength; i++)
     {
-      var {amount, start, unfreeze, isUnfreezed} = await exportedObject.MY_CONTRACT.methods.orderInfos(userAddress, i).call();
+      var {amount, start, unfreeze, isUnfreezed} = await exportedObject.MY_CONTRACT.methods.orderInfos(userAddr, i).call();
       var formatAmt = parseInt(amount);
       var formatStart = parseInt(start); 
       var formatUnfreeze = parseInt(unfreeze);
@@ -133,6 +134,7 @@ const Withdraw = () => {
           <div className='col-12 col-md-12'>
             <div className='text-center'>
               <h5 className='mt-2 mb-2'><span className='badge badge-info'>Withdraw DAI</span></h5>
+              <h5 className='mt-2 mb-2'><span className='badge badge-info'>Login Account: { userAddress }</span></h5>
             </div>
             <div className='row'>
               <div className='col-12 col-sm-12 col-md-12'>

@@ -5,98 +5,101 @@ import imgCarosol from '../../assets/carosal-bg.jpg';
 import exportedObject from '../myWeb3/Web3.js';
 import './style.css';
 const Main = () => {
-  const [userAddress, setUserAddress] = useState('');
-  const [userShortAddress, setUserShortAddress] = useState('');
-  const [userMaticBalance, setUserMaticBalance] = useState(0);
-  const [userDaiBalance, setUserDaiBalance] = useState(0);
-  const [runTime, setRunTime] = useState(0);
-  const [depositCountDown, setDepositCountDown] = useState('00:00:00');
-  const [starPool, setStarPool] = useState('$0');
-  const [topPool, setTopPool] = useState('$0');
-  const [totalPlayers, setTotalPlayers] = useState('0');
-  const [totalIncome, setTotalIncome] = useState('0');
-  const [userReferer, setUserReferer] = useState('');
-  
-  const [userStarLevel1, setUserStarLevel1] = useState('<i className="far fa-star"></i>');
-  const [userStarLevel2, setUserStarLevel2] = useState('<i className="far fa-star"></i>');
-  const [userStarLevel3, setUserStarLevel3] = useState('<i className="far fa-star"></i>');
-  const [userStarLevel4, setUserStarLevel4] = useState('<i className="far fa-star"></i>');
-  const [userStarLevel5, setUserStarLevel5] = useState('<i className="far fa-star"></i>');
+    const [userAddr, setUserAddress] = useState('');
+    const [userShortAddress, setUserShortAddress] = useState('');
+    const [userMaticBalance, setUserMaticBalance] = useState(0);
+    const [userDaiBalance, setUserDaiBalance] = useState(0);
+    const [runTime, setRunTime] = useState(0);
+    const [depositCountDown, setDepositCountDown] = useState('00:00:00');
+    const [starPool, setStarPool] = useState('$0');
+    const [topPool, setTopPool] = useState('$0');
+    const [totalPlayers, setTotalPlayers] = useState('0');
+    const [totalIncome, setTotalIncome] = useState('0');
+    const [userReferer, setUserReferer] = useState('');
+    
+    const [userStarLevel1, setUserStarLevel1] = useState(<i className="far fa-star"></i>);
+    const [userStarLevel2, setUserStarLevel2] = useState(<i className="far fa-star"></i>);
+    const [userStarLevel3, setUserStarLevel3] = useState(<i className="far fa-star"></i>);
+    const [userStarLevel4, setUserStarLevel4] = useState(<i className="far fa-star"></i>);
+    const [userStarLevel5, setUserStarLevel5] = useState(<i className="far fa-star"></i>);
+    
+    useEffect(() => {
+        const getWalletConnect = async () => {
+            var myobj = await exportedObject.walletConnect();
+            setUserAddress(myobj[0]);
+            setUserShortAddress(myobj[1]);
+            setUserMaticBalance(myobj[3]);
+            setUserDaiBalance(myobj[4]);
+            
+        }
+        getWalletConnect();
+        
+    }, []);
 
-  
-  useEffect(() => {
-    var myobj;
-    const getWalletConnect = async () => {
-      myobj = await exportedObject.walletConnect();
-      setUserAddress(myobj[0]);
-      setUserShortAddress(myobj[1]);
-      setUserMaticBalance(myobj[3]);
-      setUserDaiBalance(myobj[6]);
-      var startTime = parseInt(await exportedObject.MY_CONTRACT.methods.startTime().call()) * 1000;
-      var nowTime = (new Date()).getTime();
-      var runTime = exportedObject.formatDate(startTime, nowTime);
-      setRunTime(runTime);
-  
-      var orderLength = parseInt(await exportedObject.MY_CONTRACT.methods.getOrderLength(userAddress).call());
-      if(orderLength > 0){
-          var {unfreeze} = await exportedObject.MY_CONTRACT.methods.orderInfos(userAddress, orderLength - 1).call();
-          var unfreezeTS = parseInt(unfreeze)*1000
-          var depositCountDown = exportedObject.formatDate(nowTime, unfreezeTS);
-          setDepositCountDown(depositCountDown);
-      }
-  
-      var starPool = (parseInt(await exportedObject.MY_CONTRACT.methods.starPool().call())/1000000000000000000).toFixed(2);
-      var topPool = (parseInt(await exportedObject.MY_CONTRACT.methods.topPool().call())/1000000000000000000).toFixed(2);
-      setStarPool('$'+starPool);
-      setTopPool('$'+topPool);
-  
-      var totalUser = parseInt(await exportedObject.MY_CONTRACT.methods.totalUser().call());
-      setTotalPlayers(totalUser);
-  
-      var { referrer } = await exportedObject.MY_CONTRACT.methods.userInfo(userAddress).call();
-      var refer = exportedObject.web3.utils.toHex(referrer);
-      setUserReferer(refer);
-  
-      var {totalRevenue} = await exportedObject.MY_CONTRACT.methods.userInfo(userAddress).call();
-  
-      var totalIncome = exportedObject.web3.utils.fromWei(totalRevenue.toString(), 'ether');
-      setTotalIncome(totalIncome);
-  
-      var { level } = await exportedObject.MY_CONTRACT.methods.userInfo(userAddress).call();
-      level = parseInt(level);
-      for(let i = 0; i < level; i++){
-        if(i === 0)
+    const getHome = async () => {
+        var myobj = await exportedObject.walletConnect();
+        var userAddr = myobj[0];
+        var startTime = parseInt(await exportedObject.MY_CONTRACT.methods.startTime().call() * 1000);
+        var nowTime = (new Date()).getTime();
+        var runTime = exportedObject.formatDate(startTime, nowTime);
+        setRunTime(runTime);
+        var orderLength = parseInt(await exportedObject.MY_CONTRACT.methods.getOrderLength(userAddr).call());
+        if(orderLength > 0)
         {
-          setUserStarLevel1(<i className="fas fa-star text-warning"></i>);
+            let maxLenOrder = orderLength -1;
+            var {unfreeze} = await exportedObject.MY_CONTRACT.methods.orderInfos(userAddr, maxLenOrder).call();
+            var unfreezeTS = (parseInt(unfreeze) * 1000);
+            var depositCountDown = exportedObject.formatDate(nowTime, unfreezeTS);
+            setDepositCountDown(depositCountDown);
         }
-        else if(i === 1)
+        var divider = 1000000000000000000;
+        var starPool = (parseInt(await exportedObject.MY_CONTRACT.methods.starPool().call())/divider);
+        var topPool = (parseInt(await exportedObject.MY_CONTRACT.methods.topPool().call())/divider);
+        var totalUser = parseInt(await exportedObject.MY_CONTRACT.methods.totalUser().call());
+        var { referrer } = await exportedObject.MY_CONTRACT.methods.userInfo(userAddr).call();
+        var { totalRevenue } = await exportedObject.MY_CONTRACT.methods.userInfo(userAddr).call();
+        var totalIncome = exportedObject.web3.utils.fromWei(totalRevenue.toString(), 'ether');
+        var refer = exportedObject.web3.utils.toHex(referrer);
+        var { level } = await exportedObject.MY_CONTRACT.methods.userInfo(userAddr).call();
+        level = parseInt(level);
+        setStarPool('$'+starPool.toFixed(2));
+        setTopPool('$'+topPool.toFixed(2));
+        setTotalPlayers(totalUser);        
+        setUserReferer(refer);
+        setTotalIncome(totalIncome);
+        for(let i = 0; i < level; i++)
         {
-          setUserStarLevel2(<i className="fas fa-star text-warning"></i>);
+            if(i === 0)
+            {
+                setUserStarLevel1(<i className="fas fa-star text-warning"></i>);
+            }
+            else if(i === 1)
+            {
+                setUserStarLevel2(<i className="fas fa-star text-warning"></i>);
+            }
+            else if(i === 2)
+            {
+                setUserStarLevel3(<i className="fas fa-star text-warning"></i>);
+            }
+            else if(i === 3)
+            {
+                setUserStarLevel4(<i className="fas fa-star text-warning"></i>);
+            }
+            else if(i === 4)
+            {
+                setUserStarLevel5(<i className="fas fa-star text-warning"></i>);
+            }
         }
-        else if(i === 2)
-        {
-          setUserStarLevel3(<i className="fas fa-star text-warning"></i>);
-        }
-        else if(i === 3)
-        {
-          setUserStarLevel4(<i className="fas fa-star text-warning"></i>);
-        }
-        else if(i === 4)
-        {
-          setUserStarLevel5(<i className="fas fa-star text-warning"></i>);
-        }
-        // levelSpan.eq(i).html('<i className="fas fa-star text-warning"></i>');
-      }
     }
-    getWalletConnect();
-  }, [userAddress])
-  
-  
+    getHome();
+    // setInterval(() => {
+    //     getHome();
+    // }, 30000);
   return (
     <>
       <div className='container'>
         <div className="badge bg-success mt-3 mb-3">
-          You are join with account : <strong>{userShortAddress}</strong>
+          Login Account: <strong>{userShortAddress}</strong>
         </div>
         <div id="demo" className="carousel slide" data-bs-ride="carousel">
           <div className="carousel-indicators">
@@ -200,7 +203,7 @@ const Main = () => {
               <li className="list-group-item bg-purple text-white">Matic Balance: <span className='myMatic'>{userMaticBalance}</span></li>
               <li className="list-group-item bg-purple text-white">DAI Balance: <span className='myDai'>{userDaiBalance}</span></li>
               <li className="list-group-item bg-purple text-white">Referral: <span className='myRef'> {userReferer.substring(0, 8) + "..." + userReferer.substring(userReferer.length - 8)}</span></li>
-              <li className="list-group-item bg-purple text-white">My Referral Link: <span className='myRefLink'>{'http://localhost:3000/ref='+userAddress}</span></li>
+              <li className="list-group-item bg-purple text-white">My Referral Link: <span className='myRefLink'>{'http://localhost:3000/'+userAddr}</span></li>
             </ul>
           </div>
         </div>

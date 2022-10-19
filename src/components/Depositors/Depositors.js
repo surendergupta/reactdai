@@ -3,7 +3,7 @@ import exportedObject from '../myWeb3/Web3.js';
 import imgDai from '../../assets/dai.png';
 import './style.css';
 const Depositors = () => {
-  
+  const [userAddress, setUserAddress] = useState();
   const [latestDeposit1, setLatestDeposit1] = useState('NULL');
   const [latestDeposit2, setLatestDeposit2] = useState('NULL');
   const [latestDeposit3, setLatestDeposit3] = useState('NULL');
@@ -37,11 +37,14 @@ const Depositors = () => {
   const [latestDepositTime9, setLatestDepositTime9] = useState('...');
   const [latestDepositTime10, setLatestDepositTime10] = useState('...');
   
-  useEffect(() => {    
+  useEffect(() => {
+    
     latestPlayersPageInfo();
   }, [])
   
   const latestPlayersPageInfo = async () => {
+    let myobj = await exportedObject.walletConnect();
+    setUserAddress(myobj[0]);
     var depositCount = parseInt(await exportedObject.MY_CONTRACT.methods.getDepositorsLength().call());
     var recycle = 10;
     if(depositCount < recycle)
@@ -142,6 +145,7 @@ const Depositors = () => {
           <div className='col-12 col-md-12'>
             <div className='text-center'>
               <h5 className='mt-2 mb-2'><span className='badge badge-info'>Latest Depositors</span></h5>
+              <h5 className='mt-2 mb-2'><span className='badge badge-info'>Login Account: { userAddress }</span></h5>
             </div>
             <div className='row'>
               <div className='col-12 col-sm-12 col-md-12'>

@@ -1,0 +1,15 @@
+.modal {
+    position: absolute;
+}
+.modal-content 
+{
+    background-color: #e6e6e6 !important;
+}
+.registerCardBody
+{
+    width: 100%;
+    height: auto;
+    margin: 4% auto 4%;
+    text-align: center;
+    display: block;
+}

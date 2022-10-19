@@ -26,7 +26,11 @@ root.render(
       <MetaMaskProvider>
         <Router>
           <Routes>
-            <Route exact path="/" element={<Dashboard/>} />
+            <Route path="/">
+              <Route path=":referer" element={<Dashboard />} />
+              <Route path="" element={<Dashboard />} />
+            </Route>
+            {/* <Route path="/:referer" element={<Dashboard/>} /> */}
             <Route path="/deposit" element={ <DepositPage />} />
             <Route path="/withdraw" element={ <WithdrawPage /> } />
             <Route path="/split" element={ <SplitPage /> } />

@@ -13,14 +13,15 @@ const Split = () => {
   const [receiverAddress, setReceiverAddress] = useState('');
   const timeLen = 10000;
   const MySwal = withReactContent(Swal);
-  var myobj, estimateGas, gasLimit;
+  var estimateGas, gasLimit;
   var splitAmt = 0;
   const getWalletConnect = async () => {
-    myobj = await exportedObject.walletConnect();
+    var myobj = await exportedObject.walletConnect();
+    var userAddr = myobj[0];
     setUserAddress(myobj[0]);
     gasLimit = exportedObject.web3.utils.toHex(exportedObject.web3.utils.toWei('0.00083026', 'gwei'));
     estimateGas = exportedObject.web3.utils.toHex(exportedObject.web3.utils.toWei('5', 'gwei'));
-    splitAmt = await exportedObject.MY_CONTRACT.methods.getCurSplit(userAddress).call();
+    splitAmt = await exportedObject.MY_CONTRACT.methods.getCurSplit(userAddr).call();
     splitAmt = parseFloat(splitAmt/1000000000000000000);
     setAvailableAmount(splitAmt);
   }
@@ -183,6 +184,7 @@ const Split = () => {
           <div className='col-12 col-md-12'>
             <div className='text-center'>
               <h5 className='mt-2 mb-2'><span className='badge badge-info'>SPLIT INCOME</span></h5>
+              <h5 className='mt-2 mb-2'><span className='badge badge-info'>Login Account: { userAddress }</span></h5>
             </div>
             <div className='row'>
               <div className='col-12 col-sm-6 col-md-6 mb-2'>

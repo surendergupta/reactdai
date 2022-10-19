@@ -3,7 +3,7 @@ import exportedObject from '../myWeb3/Web3.js';
 import './style.css';
 const Top = () => {
   const ZERO_ADDR = '0x0000000000000000000000000000000000000000';
- 
+  const [userAddress, setUserAddress] = useState();
   const [dayTopUser1, setDayTopUser1] = useState('NULL');
   const [dayTopUser2, setDayTopUser2] = useState('NULL');
   const [dayTopUser3, setDayTopUser3] = useState('NULL');
@@ -13,6 +13,8 @@ const Top = () => {
   }, [])
 
   const topPlayersPageInfo = async () => {
+    let myobj = await exportedObject.walletConnect();
+    setUserAddress(myobj[0]);
     var curDay = parseInt(await exportedObject.MY_CONTRACT.methods.getCurDay().call());
     for(var i = 0; i < 3; i++)
     {
@@ -45,6 +47,7 @@ const Top = () => {
           <div className='col-12 col-md-12'>
             <div className='text-center'>
               <h5 className='mt-2 mb-2'><span className='badge badge-info'>Top 3 Players</span></h5>
+              <h5 className='mt-2 mb-2'><span className='badge badge-info'>Login Account: {userAddress}</span></h5>
             </div>
             <div className='row'>
               <div className='col-12 col-sm-12 col-md-12'>

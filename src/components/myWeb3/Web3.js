@@ -51,8 +51,9 @@ const walletConnect = async () => {
             daiBalance = await DAI_CONTRACT.methods.balanceOf(userAddr).call();
             daiBalance = web3.utils.fromWei(daiBalance, 'ether');
             daiBalance = parseFloat(daiBalance).toFixed(2);
-            window.ethereum.on('accountsChanged', function (accounts) {
-                console.log(`account changed`);
+            window.ethereum.on('chainChanged', function (accounts) {
+                window.location.reload();
+                console.log(`account changed ${accounts}`);
             });
             return [
                 userAddr,
